@@ -1,16 +1,15 @@
-const gameElements = ["rock", "paper", "scissors"];
+const winningCombinations = {
+  rock: "scissors",
+  paper: "rock",
+  scissors: "paper",
+};
+const gameElements = Object.keys(winningCombinations);
 
 let playerScore = 0;
 let computerScore = 0;
 let roundCount = 0;
 
 const roundWinner = (playerSelection, computerSelection) => {
-  const winningCombinations = {
-    rock: "scissors",
-    paper: "rock",
-    scissors: "paper",
-  };
-
   if (playerSelection === computerSelection) {
     return "tie";
   } else if (winningCombinations[playerSelection] === computerSelection) {
@@ -21,17 +20,16 @@ const roundWinner = (playerSelection, computerSelection) => {
 };
 
 let winner = document.getElementById("winner");
-const playRound = (string) => {
-  if (string === "tie") {
-    winner.textContent = "It's a tie";
-    return;
-  } else if (string === "player") {
-    winner.textContent = "You win this round";
-    playerScore++;
-  } else if (string === "computer") {
-    winner.textContent = "Computer wins this round";
-    computerScore++;
-  }
+const playRound = (result) => {
+  const messages = {
+    tie: "It's a tie",
+    player: "You win this round",
+    computer: "Computer wins this round",
+  };
+
+  winner.textContent = messages[result];
+  if (result === "player") playerScore++;
+  if (result === "computer") computerScore++;
 };
 
 const resetGame = () => {
@@ -49,18 +47,22 @@ const resetGame = () => {
   }
 };
 
+const updateScoreboard = () => {
+  document.getElementById("playerScore").textContent =
+    "Player Score: " + playerScore;
+  document.getElementById("computerScore").textContent =
+    "Computer Score: " + computerScore;
+  document.getElementById("round").textContent = "Round: " + roundCount;
+};
+
 document.querySelectorAll(".btn").forEach((button) => {
   button.addEventListener("click", () => {
     const playerSelection = button.textContent.toLowerCase();
-    const computerSelection = gameElements[Math.floor(Math.random() * 3)];
+    const computerSelection =
+      gameElements[Math.floor(Math.random() * gameElements.length)];
     playRound(roundWinner(playerSelection, computerSelection));
     roundCount++;
     resetGame();
-
-    document.getElementById("playerScore").textContent =
-      "Player Score: " + playerScore;
-    document.getElementById("computerScore").textContent =
-      "Computer Score: " + computerScore;
-    document.getElementById("round").textContent = "Round: " + roundCount;
+    updateScoreboard();
   });
 });
